@@ -2,8 +2,8 @@
 
 A **powerful, feature-rich web-based music player** with AI audio enhancement, real-time waveform analysis, professional EQ, and advanced music library management.
 
-**Version:** 2.6.0  
-**Last Updated:** November 22, 2025  
+**Version:** 3.1.0  
+**Last Updated:** December 24, 2025  
 **License:** MIT
 
 ---
@@ -242,7 +242,14 @@ Organize and clean your music:
 
 ---
 
-## 🎯 What's NEW in v2.6.0 ⭐
+### 🎯 What's NEW in v3.1.0 (current) ⭐
+
+- ✅ **Added : Visitor counter using web API**
+- ✅ **Added : Report Bug option**
+- ✅ **Added : Tutorial button to get understand working**
+
+
+## 🎯 What's NEW in v3.0.0 
 
 ### Fixed Audio Distortion Issues
 - ✅ **Proper Audio Chain** - SOURCE → PREAMP → EQ[10] → MASTER → SPEAKERS
@@ -584,7 +591,13 @@ Result: Clean, powerful bass without distortion! 🔊
 
 ## 📝 Version History
 
-### v2.6.0 (Current) ⭐ MAJOR BUG FIX
+### v3.1.0 (current) - 24 Decmber 2025
+
+- ✅ **Added : Visitor counter using web API**
+- ✅ **Added : Report Bug option**
+- ✅ **Added : Tutorial button to get understand working**
+
+### v3.0.0 ⭐ MAJOR BUG FIX
 - ✅ **FIXED: Audio distortion in presets**
 - ✅ **FIXED: Super Bass clipping issue**
 - ✅ **Corrected method name** - `createMediaElementSource()` ✅
@@ -673,5 +686,5 @@ MIT License - See `LICENSE.txt` for details
 
 **Enjoy your music! 🎵**
 
-*Last Updated: November 22, 2025*
+*Last Updated: December 24, 2025*
 *🎯 All audio distortion issues FIXED! Distortion-free playback guaranteed! ✅*
