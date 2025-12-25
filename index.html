@@ -629,32 +629,33 @@
             <div class="control-title">🎛️ 10-Band Equalizer</div>
             
             <!-- Bass & Treble Slider Controls -->
+             <!-- New Addition on 25/12/2025 --> <!-- Updated Bass/Treble Controls [-10db to +10db] -->
             <div style="display: flex; justify-content: center; gap: 30px; margin: 25px 0; flex-wrap: wrap;">
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
                     <div style="font-weight: 600; color: #3498db;">🔊 BASS</div>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 0.8em; opacity: 0.7;">-20dB</span>
-                        <input type="range" class="slider" id="bassSlider" min="-20" max="20" step="1" value="0" 
+                        <span style="font-size: 0.8em; opacity: 0.7;">-10dB</span>
+                        <input type="range" class="slider" id="bassSlider" min="-10" max="10" step="1" value="0" 
                                style="width: 120px;" oninput="setBass(this.value)">
-                        <span style="font-size: 0.8em; opacity: 0.7;">+20dB</span>
+                        <span style="font-size: 0.8em; opacity: 0.7;">+10dB</span>
                     </div>
                     <div style="text-align: center;">
                         <div id="bassValue" style="font-weight: 600; color: #2ecc71;">0 dB</div>
-                        <div id="bassPercentage" style="font-size: 0.8em; opacity: 0.7;">50%</div>
+                        <div id="bassPercentage" style="font-size: 0.8em; opacity: 0.7;">0%</div>
                     </div>
                 </div>
                 
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
                     <div style="font-weight: 600; color: #3498db;">✨ TREBLE</div>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 0.8em; opacity: 0.7;">-20dB</span>
-                        <input type="range" class="slider" id="trebleSlider" min="-20" max="20" step="1" value="0" 
+                        <span style="font-size: 0.8em; opacity: 0.7;">-10dB</span>
+                        <input type="range" class="slider" id="trebleSlider" min="-10" max="10" step="1" value="0" 
                                style="width: 120px;" oninput="setTreble(this.value)">
-                        <span style="font-size: 0.8em; opacity: 0.7;">+20dB</span>
+                        <span style="font-size: 0.8em; opacity: 0.7;">+10dB</span>
                     </div>
                     <div style="text-align: center;">
                         <div id="trebleValue" style="font-weight: 600; color: #2ecc71;">0 dB</div>
-                        <div id="treblePercentage" style="font-size: 0.8em; opacity: 0.7;">50%</div>
+                        <div id="treblePercentage" style="font-size: 0.8em; opacity: 0.7;">0%</div>
                     </div>
                 </div>
             </div>
@@ -1326,6 +1327,27 @@ window.addEventListener('load', checkAudioContextSupport);
                 audioContext.resume().catch(err => console.warn('⚠️ Resume failed:', err));
             }
         }
+
+        // Added for FLAC support check
+
+        // ✅ FIXED FILE LOADER — streams full FLACs
+            function processFiles(files) {
+                if (!files || files.length === 0) return;
+
+                const file = files[0]; // load first file for demo
+                const audioPlayer = document.getElementById('audioPlayer');
+
+                // Stream directly from disk (no huge DataURL)
+                audioPlayer.src = URL.createObjectURL(file);
+                audioPlayer.type = 'audio/flac';  // hint MIME type
+                audioPlayer.load();
+
+                console.log('🎵 Loaded audio file:', file.name);
+
+                // Initialize audio chain
+                ensureAudioInitialized();
+            }
+
 
         // Set Pre-Amplifier Gain
         function setPreampGain(value) {
@@ -2622,29 +2644,58 @@ window.addEventListener('load', checkAudioContextSupport);
             console.log('🎛️ Pre-Amp Gain:', gain + ' dB');
         }
 
-        // Set Bass Control - FIXED
+        // // Set Bass Control - FIXED
+        // function setBass(value) {
+        //     ensureAudioInitialized();
+        //     const bass = parseFloat(value);
+            
+        //     // ⬇️ AUTO REDUCE PREAMP TO PREVENT CLIPPING ⬇️
+        //     let preampReduction = 1.0;
+        //     if (bass > 4) {
+        //         // Reduce preamp gain automatically when bass is boosted
+        //         preampReduction = 1.0 - ((bass - 4) * 0.08); // -0.08 per dB above 4dB
+        //     }
+            
+        //     if (preampGainNode) {
+        //         const linearGain = Math.pow(10, preampReduction / 20);
+        //         preampGainNode.gain.setValueAtTime(linearGain, audioContext.currentTime);
+        //     }
+            
+        //     // Update display
+        //     document.getElementById('bassValue').textContent = bass + ' dB';
+        //     const percentage = ((bass + 20) / 40) * 100;
+        //     document.getElementById('bassPercentage').textContent = Math.round(percentage) + '%';
+            
+        //     // Apply to bass EQ bands
+        //     if (eqNodes[32]) {
+        //         eqNodes[32].gain.setValueAtTime(bass * 0.8, audioContext.currentTime);
+        //     }
+        //     if (eqNodes[64]) {
+        //         eqNodes[64].gain.setValueAtTime(bass * 0.6, audioContext.currentTime);
+        //     }
+        //     if (eqNodes[125]) {
+        //         eqNodes[125].gain.setValueAtTime(bass * 0.4, audioContext.currentTime);
+        //     }
+            
+        //     console.log('🔊 Bass:', bass + ' dB | Preamp reduction:', preampReduction.toFixed(2));
+        // }
+
+
+        // New bass updated -> 25 December 2025
+
+        // Set Bass Control - UPDATED
         function setBass(value) {
             ensureAudioInitialized();
             const bass = parseFloat(value);
-            
-            // ⬇️ AUTO REDUCE PREAMP TO PREVENT CLIPPING ⬇️
-            let preampReduction = 1.0;
-            if (bass > 4) {
-                // Reduce preamp gain automatically when bass is boosted
-                preampReduction = 1.0 - ((bass - 4) * 0.08); // -0.08 per dB above 4dB
-            }
-            
-            if (preampGainNode) {
-                const linearGain = Math.pow(10, preampReduction / 20);
-                preampGainNode.gain.setValueAtTime(linearGain, audioContext.currentTime);
-            }
-            
-            // Update display
+
+            // 🔊 Update display
             document.getElementById('bassValue').textContent = bass + ' dB';
-            const percentage = ((bass + 20) / 40) * 100;
+
+            // Map -10 → -100%, 0 → 0%, +10 → +100%
+            const percentage = (bass / 10) * 100;
             document.getElementById('bassPercentage').textContent = Math.round(percentage) + '%';
-            
-            // Apply to bass EQ bands
+
+            // 🎚️ Apply to bass EQ bands
             if (eqNodes[32]) {
                 eqNodes[32].gain.setValueAtTime(bass * 0.8, audioContext.currentTime);
             }
@@ -2654,21 +2705,49 @@ window.addEventListener('load', checkAudioContextSupport);
             if (eqNodes[125]) {
                 eqNodes[125].gain.setValueAtTime(bass * 0.4, audioContext.currentTime);
             }
-            
-            console.log('🔊 Bass:', bass + ' dB | Preamp reduction:', preampReduction.toFixed(2));
+
+            console.log('🔊 Bass:', bass + ' dB | Percentage:', percentage.toFixed(0) + '%');
         }
 
-        // Set Treble Control - FIXED
+        // // Set Treble Control - FIXED
+        // function setTreble(value) {
+        //     initAudioContext();
+        //     const treble = parseFloat(value);
+            
+        //     // Update display
+        //     document.getElementById('trebleValue').textContent = treble + ' dB';
+        //     const percentage = ((treble + 20) / 40) * 100;
+        //     document.getElementById('treblePercentage').textContent = Math.round(percentage) + '%';
+            
+        //     // Apply to treble EQ bands (8kHz, 16kHz)
+        //     if (eqNodes[8000]) {
+        //         eqNodes[8000].gain.setValueAtTime(treble * 0.8, audioContext.currentTime);
+        //     }
+        //     if (eqNodes[16000]) {
+        //         eqNodes[16000].gain.setValueAtTime(treble, audioContext.currentTime);
+        //     }
+        //     if (eqNodes[4000]) {
+        //         eqNodes[4000].gain.setValueAtTime(treble * 0.5, audioContext.currentTime);
+        //     }
+            
+        //     console.log('✨ Treble:', treble + ' dB');
+        // }
+
+        // Set Treble Control - UPDATED
+        // Newly updated -> 25 December 2025
+        
         function setTreble(value) {
             initAudioContext();
             const treble = parseFloat(value);
-            
-            // Update display
+
+            // 🎚️ Update display
             document.getElementById('trebleValue').textContent = treble + ' dB';
-            const percentage = ((treble + 20) / 40) * 100;
+
+            // Map -10 → -100%, 0 → 0%, +10 → +100%
+            const percentage = (treble / 10) * 100;
             document.getElementById('treblePercentage').textContent = Math.round(percentage) + '%';
-            
-            // Apply to treble EQ bands (8kHz, 16kHz)
+
+            // Apply to treble EQ bands (4kHz, 8kHz, 16kHz)
             if (eqNodes[8000]) {
                 eqNodes[8000].gain.setValueAtTime(treble * 0.8, audioContext.currentTime);
             }
@@ -2678,9 +2757,10 @@ window.addEventListener('load', checkAudioContextSupport);
             if (eqNodes[4000]) {
                 eqNodes[4000].gain.setValueAtTime(treble * 0.5, audioContext.currentTime);
             }
-            
-            console.log('✨ Treble:', treble + ' dB');
+
+            console.log('✨ Treble:', treble + ' dB | Percentage:', percentage.toFixed(0) + '%');
         }
+
 
         // Update Individual EQ Band - FIXED
         function updateEQBand(frequency, gain) {
